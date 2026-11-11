@@ -31,7 +31,7 @@
         "type": "array",
         "maxItems": 50,
         "items": { "type": "string", "minLength": 1 },
-        "description": "Camera ids the agent may use. Empty means every camera on the account."
+        "description": "Camera ids the agent should use. This guides the model only: the key itself can read every camera on the account."
       }
     }
   },
@@ -39,7 +39,7 @@
   "uiHints": {
     "token": { "label": "Revere read-only key", "placeholder": "paste the key Revere showed you", "sensitive": true },
     "apiUrl": { "label": "Revere address", "advanced": true },
-    "cameras": { "label": "Only these cameras (ids)", "advanced": true }
+    "cameras": { "label": "Prefer these cameras (ids). Guides the model; the key is account-wide.", "advanced": true }
   },
 
   "skills": ["skills"],

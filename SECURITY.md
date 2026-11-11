@@ -6,7 +6,7 @@ A manifest-only OpenClaw plugin: a configuration schema, Revere's MCP server def
 
 ## What the key can do
 
-The plugin uses a **read-only Revere MCP key**. It can read the account's cameras, events, pictures, stories and clips. It cannot rename or disable a camera, re-run anything, start live video, manage keys or reach another account. Revere records which tool each key called, on which camera and when (never the arguments or results), and keeps it 30 days; you can see when a key was last used and revoke it at once in Revere.
+The plugin uses a **read-only Revere MCP key**. It can read the account's cameras, events, pictures, stories and clips. **The key is account-wide:** the plugin's `cameras` setting only tells the model which cameras to use, it does not limit the key, so it is a convenience and not a security boundary. It cannot rename or disable a camera, re-run anything, start live video, manage keys or reach another account. Revere records which tool each key called, on which camera and when (never the arguments or results), and keeps it 30 days; you can see when a key was last used and revoke it at once in Revere.
 
 Do not give the plugin a key with write access, and do not paste a key into a chat. If a key was exposed (a shared `openclaw.json`, a screenshot, a log), revoke it in Revere and make a new one.
 

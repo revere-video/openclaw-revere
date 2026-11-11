@@ -22,7 +22,9 @@ See your Revere cameras from your OpenClaw agent: ask for a live picture, ask wh
 3. Give it the key. Prefer a SecretRef (an environment variable or a file) over pasting it into `openclaw.json`, which may be read by others. The setting is `token`.
 4. Ask your agent: "What's happening at the front door?"
 
-Settings (`openclaw.plugin.json`): `token` (required), `apiUrl` (default `https://api.revere.video`, https only), `cameras` (camera ids the agent may use; empty means every camera).
+Settings (`openclaw.plugin.json`): `token` (required), `apiUrl` (default `https://api.revere.video`, https only), `cameras` (camera ids the agent should use; empty means every camera).
+
+**The `cameras` setting fences the model, not the key.** A Revere MCP key is account-wide: it can read every camera on the account, whatever this setting says. The setting and the skills tell the agent which cameras to use, and a mistaken or manipulated agent could still reach the others. If a camera must be out of reach, it has to be on a different Revere account, or the key must not exist.
 
 ## Triggers: polling, and optionally webhooks
 

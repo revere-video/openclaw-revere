@@ -14,8 +14,10 @@ The plugin's whole dependency on Revere. A change to any of these in Revere is a
 | `get_event_image` | `analytics_id`, `frame_index?` | an inline image of a stored frame |
 | `find_camera_memories` | a query and optional range | matching events |
 | `chart_camera_metric` | `device_id`, a metric and range | a chart |
-| `list_stories` | `story_id?`, `since?`, `before?`, `device_id?`, `limit?` (at most 20) | stories (`id`, times, `title`, `summary`, `categories`, `cameras`, `event_count`), or one story with its `events` |
-| `list_clips` | `clip_id?`, `device_id?`, `limit?` (at most 20) | clips (`id`, `camera`, times, `duration_s`, `status`, and for a completed clip a `link` valid for `link_expires_in_s` seconds) |
+| `list_stories` (newer, optional) | `story_id?`, `since?`, `before?`, `device_id?`, `limit?` (at most 20) | stories (`id`, times, `title`, `summary`, `categories`, `cameras`, `event_count`), or one story with its `events` |
+| `list_clips` (newer, optional) | `clip_id?`, `device_id?`, `limit?` (at most 20) | clips (`id`, `camera`, times, `duration_s`, `status`, and for a completed clip a `link` valid for `link_expires_in_s` seconds) |
+
+`list_stories` and `list_clips` are newer than the others and are not on every account until Revere has rolled them out; the skills check the tool list and fall back to `list_detections` and `find_camera_memories` when they are missing.
 
 Errors the skills expect: `HISTORY_LIMIT` (older than the plan's history), `NOT_FOUND`, a gateway-offline error from `get_live_snapshot`, and a rate refusal.
 

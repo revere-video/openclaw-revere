@@ -18,8 +18,10 @@ Revere is a camera system. This plugin gives you its read-only tools over MCP. Y
 | `get_event_image` | Get the stored picture of an event, by its `analytics_id` from `list_detections`. Works when the gateway is offline. |
 | `find_camera_memories` | Search the account's events in plain words ("when did the cat last go out?"). |
 | `chart_camera_metric` | A metric chart for a camera over time. |
-| `list_stories` | Stories: events grouped into what happened (a delivery, a visit). Give `story_id` for one story with its events. |
-| `list_clips` | Video clips people made, with a link that works 10 minutes. |
+| `list_stories` | *Optional, newer.* Stories: events grouped into what happened (a delivery, a visit). Give `story_id` for one story with its events. |
+| `list_clips` | *Optional, newer.* Video clips people made, with a link that works 10 minutes. |
+
+`list_stories` and `list_clips` are not on every account yet: they appear only once Revere has rolled out the stories and clips tools. **Check the tool list before using them.** If they are missing: for a day's activity, use `list_detections` and `find_camera_memories` instead; for clips, tell the user clips are not available through this plugin yet. Never invent a story or a clip.
 
 ## Rules
 
@@ -29,9 +31,9 @@ Revere is a camera system. This plugin gives you its read-only tools over MCP. Y
    - Send a picture only to the user who asked for it, in the chat they asked in. Do not post pictures or clip links to a group chat unless the user told you to.
    - Ask for one frame, not all of them. Describe what matters; do not repeat a person's features beyond what the user needs.
    - A clip link or a webhook snapshot link is a credential for 10 minutes. Use it once. Do not store it, and do not put it where others can read it.
-4. **Stay inside the cameras the user named.** If the user told you to use only certain cameras, use only those, even if `list_devices` shows more.
+4. **Stay inside the cameras the user named.** If the user told you to use only certain cameras, use only those, even if `list_devices` shows more. This is your own discipline: the plugin's `cameras` setting and the user's words fence you, but the key itself is account-wide (see the README), so nothing else stops a mistake.
 5. **Be gentle on the account.** Poll no faster than once a minute. Remember the id or time of the last event you handled so you never repeat one. Plans limit API and MCP calls per minute; if a call is refused for rate, wait and say so once.
-6. **Say what the account can't do.** Free accounts see seven days of events and Plus sixty; an older time returns `HISTORY_LIMIT` with the message. With AI off there are no captions, descriptions, titles or summaries: say so, and describe from the detection classes alone. A gateway that is offline cannot give a live picture; say which one and since when (`gateway_last_seen`).
+6. **Say what the account can't do.** An account sees only as far back as its plan allows: an older time returns `HISTORY_LIMIT` with a message. Relay that message as it is and do not guess the limit. With AI off there are no captions, descriptions, titles or summaries: say so, and describe from the detection classes alone. A gateway that is offline cannot give a live picture; say which one and since when (`gateway_last_seen`).
 7. **Times.** Tool times are UTC. Say them in the user's local time.
 
 ## Recipes
