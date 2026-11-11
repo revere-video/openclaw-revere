@@ -1,0 +1,14 @@
+# A template. Copy to wrangler.toml, set your own name, and add the secrets with `wrangler secret put`:
+#   REVERE_WEBHOOK_SECRET, OPENCLAW_HOOK_URL, OPENCLAW_HOOK_TOKEN
+name = "revere-openclaw-relay"
+main = "index.mjs"
+compatibility_date = "2026-01-01"
+
+[vars]
+# ALLOWED_EVENTS = "object.detected,health.camera_stale,health.camera_recovered"
+# FORWARD_SNAPSHOT = "false"
+
+# Optional: drop a delivery Revere sends twice. Create with `wrangler kv namespace create SEEN`.
+# [[kv_namespaces]]
+# binding = "SEEN"
+# id = "<your namespace id>"
