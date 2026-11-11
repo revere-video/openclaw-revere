@@ -1,0 +1,60 @@
+// Revere for OpenClaw: a manifest-only plugin. No code runs in the gateway: it adds Revere's MCP server and the skills.
+// Native manifests are parsed as JSON5, so comments are allowed.
+//
+// UNVERIFIED against a running OpenClaw (docs.openclaw.ai, read 10 Nov 2026): that a plugin with no entry point is valid,
+// the exact shape of `mcpServers`, and whether a config value can be placed in its headers. See docs/verification.md.
+{
+  "id": "revere",
+  "name": "Revere",
+  "description": "See your Revere cameras from OpenClaw: live pictures, what was detected, stories and clips. Read-only.",
+  "version": "0.1.0",
+  "categories": ["home-automation", "cameras"],
+
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["token"],
+    "properties": {
+      "token": {
+        "type": "string",
+        "minLength": 16,
+        "pattern": "^\\S+$",
+        "description": "A read-only Revere MCP key. Make one in Revere (Integrations, AI assistant). It is shown once."
+      },
+      "apiUrl": {
+        "type": "string",
+        "default": "https://api.revere.video",
+        "pattern": "^https://[^\\s/]+$",
+        "description": "Revere's address. https only, no path."
+      },
+      "cameras": {
+        "type": "array",
+        "maxItems": 50,
+        "items": { "type": "string", "minLength": 1 },
+        "description": "Camera ids the agent may use. Empty means every camera on the account."
+      }
+    }
+  },
+
+  "uiHints": {
+    "token": { "label": "Revere read-only key", "placeholder": "paste the key Revere showed you", "sensitive": true },
+    "apiUrl": { "label": "Revere address", "advanced": true },
+    "cameras": { "label": "Only these cameras (ids)", "advanced": true }
+  },
+
+  "skills": ["skills"],
+
+  "mcpServers": {
+    "revere": {
+      "transport": "streamable-http",
+      "url": "${config.apiUrl}/mcp",
+      "headers": { "Authorization": "Bearer ${config.token}" }
+    }
+  },
+
+  "recommendedPrompts": [
+    "What is happening at my front door right now?",
+    "Tell me when a package arrives.",
+    "Summarize my yard each evening."
+  ]
+}
