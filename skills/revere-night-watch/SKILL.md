@@ -11,7 +11,7 @@ Load the `revere` skill first.
 **Set up (once, with the user)**
 - Which cameras (the back and side ones, usually), and the hours (default 11 pm to 6 am, the user's local time).
 - Where to send the alerts (this chat by default).
-- A scheduled automation that runs this skill about once a minute inside those hours. Keep the last handled `analytics_id`.
+- A scheduled automation that runs this skill every five minutes inside those hours (once a minute only if the user says their plan allows the calls: see the `revere` skill's limits). Each run asks each chosen camera once. Keep the last handled `analytics_id`.
 
 **Each run**
 1. `list_detections` for each chosen camera since the last run.

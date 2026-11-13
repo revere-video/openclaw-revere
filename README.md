@@ -28,7 +28,16 @@ Settings (`openclaw.plugin.json`): `token` (required), `apiUrl` (default `https:
 
 ## Triggers: polling, and optionally webhooks
 
-The recipes that watch for something run as scheduled automations about once a minute. That works behind any home router and needs nothing from you. For "tell me *now*", run the small [webhook relay](docs/webhook-relay.md) that sits between Revere's webhooks and OpenClaw's hooks.
+The recipes that watch for something run as scheduled automations every five minutes (see Limits below). That works behind any home router and needs nothing from you. For "tell me *now*", run the small [webhook relay](docs/webhook-relay.md) that sits between Revere's webhooks and OpenClaw's hooks.
+
+## Limits
+
+Revere limits API and MCP calls together, per account. Every key on the account shares the allowance, so a script that uses a personal token on Revere's REST API spends the same calls as your agent. Each tool call counts; listing the tools does not.
+
+- **Your plan's limits,** shown in Revere, apply. One camera asked every minute around the clock is 1,440 calls a day, which can use up a small daily allowance on its own, so the recipes ask every five minutes, and a watch over several cameras uses a call per camera each time.
+- **When it is reached,** Revere answers HTTP 429 with a `Retry-After` header and an error naming the limit and when it resets. The skills tell the agent to stop, wait that long, and tell you once, not to retry in a loop.
+- **Your plan also decides** how far back history goes (older times come back `HISTORY_LIMIT`) and how much a search through `find_camera_memories` returns.
+- **Webhooks use no calls.** If you want "tell me now" without spending calls on polling, use the [webhook relay](docs/webhook-relay.md).
 
 ## Safe by design
 
