@@ -21,6 +21,8 @@ The plugin's whole dependency on Revere. A change to any of these in Revere is a
 
 Errors the skills expect: `HISTORY_LIMIT` (older than the plan's history), `NOT_FOUND`, a gateway-offline error from `get_live_snapshot`, and a rate refusal.
 
+**The rate refusal** is HTTP 429 with a `Retry-After` header in seconds, and a JSON-RPC error whose `data` is `{ "code": "USAGE_LIMIT_REACHED", "limit": "feat_api_calls_per_minute" | "feat_api_calls_per_day", "value": <the plan's number>, "resets_at": <ISO time> }`. The limit is the account's (every key together). Only `tools/call` counts; `initialize` and `tools/list` do not. Free is 60 a minute and 2,000 a day.
+
 ## Revere's outbound webhooks (the relay only)
 
 Signed with `X-Belfry-Signature-V2` (base64 HMAC-SHA256 of `{X-Belfry-Timestamp}.{raw body}`), with `X-Belfry-Timestamp` and `X-Belfry-Event-Id`. Events the relay forwards by default: `object.detected`, `health.camera_stale`, `health.camera_recovered`. The signing is pinned by the example request Revere prints in its webhook documentation; `relay/test/relay.test.mjs` verifies that exact request.

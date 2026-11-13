@@ -10,7 +10,7 @@ Load the `revere` skill first. This needs the account's **AI descriptions** on: 
 
 **Set up (once, with the user)**
 - Ask which camera faces the door or porch, and where to send the message (this chat is the default).
-- Create a scheduled automation that runs this skill about once a minute. Remember the `analytics_id` of the newest event you handled (a state note), so none repeats.
+- Create a scheduled automation that runs this skill every five minutes (once a minute only if the user says their plan allows the calls: see the `revere` skill's limits). Remember the `analytics_id` of the newest event you handled (a state note), so none repeats.
 
 **Each run**
 1. `list_detections` for that camera from the last handled event's time (or the last ten minutes the first time) to now.
