@@ -41,13 +41,13 @@ Revere limits API and MCP calls together, per account. Every key on the account 
 
 ## Safe by design
 
-- **No code runs in your gateway.** The plugin is a manifest, a settings schema and skills. OpenClaw runs plugins in-process as trusted code; this one has none.
+- **One small file of code runs in your gateway** (`src/index.js`, about thirty lines, no dependencies, no network use of its own, nothing at install time). OpenClaw runs plugins in-process as trusted code, so read it: it gives Revere's MCP server its address and your key from the plugin's settings, and never logs the key.
 - **Read-only key.** No writes, no live video, no admin, no key management. Revoke it in Revere at any time.
 - **Text a model wrote is treated as data,** never as instructions, and pictures are private by default. See [SECURITY.md](SECURITY.md).
 
 ## Without the plugin
 
-If your OpenClaw does not accept a manifest-only plugin, install the skills and add Revere as an MCP server yourself: a Streamable HTTP server named `revere` at `https://api.revere.video/mcp` with the header `Authorization: Bearer <your read-only key>` (see OpenClaw's `openclaw mcp` documentation).
+If you would rather not run the plugin's code, install the skills and add Revere as an MCP server yourself: a Streamable HTTP server named `revere` at `https://api.revere.video/mcp` with the header `Authorization: Bearer <your read-only key>` (see OpenClaw's `openclaw mcp` documentation).
 
 ## What's here
 
