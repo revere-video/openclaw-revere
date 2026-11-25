@@ -1,12 +1,13 @@
 {
   "name": "@revere-video/openclaw-revere",
   "version": "0.1.0",
-  "description": "Revere for OpenClaw: see your cameras from your agent. Read-only. A manifest-only plugin with skills, and a webhook relay template.",
+  "description": "Revere for OpenClaw: see your cameras from your agent. Read-only. A plugin with a manifest, skills and a small entry that connects Revere's MCP server, and a webhook relay template.",
   "license": "MIT",
   "private": false,
   "type": "module",
   "files": [
     "openclaw.plugin.json",
+    "src",
     "skills",
     "relay",
     "docs",
@@ -15,7 +16,7 @@
     "README.md"
   ],
   "scripts": {
-    "test": "node --test 'relay/test/*.test.mjs' 'scripts/*.test.mjs'",
+    "test": "node --test 'relay/test/*.test.mjs' 'scripts/*.test.mjs' 'src/*.test.mjs'",
     "check": "node scripts/check.mjs"
   },
   "engines": {
@@ -27,5 +28,10 @@
     "revere",
     "cameras",
     "mcp"
-  ]
+  ],
+  "openclaw": {
+    "extensions": [
+      "./src/index.js"
+    ]
+  }
 }

@@ -28,6 +28,9 @@ export function frontmatter(text) {
   return fm;
 }
 
+// The category slugs OpenClaw 2026.11.10 accepts in a manifest (at most three of them).
+export const OPENCLAW_CATEGORIES = ['channels', 'models', 'agent-runtimes', 'memory', 'context', 'voice', 'web', 'computer-use', 'media', 'security', 'integrations', 'developer-tools', 'infrastructure', 'documents-files', 'inbox-collaboration', 'productivity', 'scheduling', 'finance-payments', 'sales-marketing', 'data-analytics', 'agent-orchestration', 'research', 'other', 'tools', 'runtime', 'gateway'];
+
 const CREDENTIAL = /\b(rvpat_[0-9A-Za-z]{20,}|bfry_mcp_[0-9a-f]{20,}|sk-[A-Za-z0-9]{20,}|-----BEGIN [A-Z ]*PRIVATE KEY-----)/;
 
 export function check(dir = root) {
@@ -46,9 +49,20 @@ export function check(dir = root) {
   if (manifest.uiHints?.token?.sensitive !== true) problems.push('uiHints must mark token sensitive');
   if (!/\^https:/.test(schema.properties?.apiUrl?.pattern ?? '')) problems.push('apiUrl must be restricted to https');
   if ((manifest.recommendedPrompts ?? []).length > 3) problems.push('recommendedPrompts is at most three');
-  if (manifest.contracts?.tools || manifest.activation) problems.push('v1 is manifest-only: no contracts.tools and no activation');
-  if (existsSync(join(dir, 'index.ts')) || existsSync(join(dir, 'index.js')) || existsSync(join(dir, 'dist'))) problems.push('v1 ships no entry point');
+  if (manifest.contracts?.tools || manifest.activation) problems.push('v1 has no tools and no activation: no contracts.tools and no activation');
   if (JSON.stringify(manifest.mcpServers ?? {}).includes('http://')) problems.push('the MCP server must be https');
+  if (JSON.stringify(manifest.mcpServers ?? {}).includes('${config')) problems.push('OpenClaw does not fill ${config.*} into mcpServers: the entry does (src/index.js)');
+  if (!manifest.categories?.length || manifest.categories.length > 3 || manifest.categories.some(c => !OPENCLAW_CATEGORIES.includes(c))) problems.push('categories must be one to three that OpenClaw accepts');
+  // The one file of code runs in the gateway as trusted code: it is kept to what it must do.
+  const ext = pkg.openclaw?.extensions;
+  if (!Array.isArray(ext) || ext.length !== 1) problems.push('package.json openclaw.extensions must name the one entry');
+  else if (!existsSync(join(dir, ext[0]))) problems.push(`the entry ${ext[0]} is missing`);
+  else {
+    const code = read(ext[0]).replace(/\/\/[^\n]*/g, '');
+    if (/^\s*import\s/m.test(code) || /\brequire\s*\(/.test(code)) problems.push('the entry imports nothing');
+    if (/\bconsole\./.test(code) || /\blogger\b/.test(code)) problems.push('the entry does not log');
+    if (/\bprocess\.env\b/.test(code) || /\bfetch\s*\(/.test(code) || /node:(http|https|net|child_process|fs)/.test(code)) problems.push('the entry does not read the environment or use the network');
+  }
   if ((pkg.dependencies && Object.keys(pkg.dependencies).length) || pkg.scripts?.install || pkg.scripts?.postinstall || pkg.scripts?.preinstall) problems.push('no dependencies and no install-time scripts');
 
   const skills = readdirSync(join(dir, 'skills')).filter(n => statSync(join(dir, 'skills', n)).isDirectory());

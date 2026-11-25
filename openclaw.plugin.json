@@ -1,14 +1,14 @@
-// Revere for OpenClaw: a manifest-only plugin. No code runs in the gateway: it adds Revere's MCP server and the skills.
+// Revere for OpenClaw: a manifest and one small piece of code (src/index.js). The manifest adds Revere's MCP server and
+// the skills; the code gives the server its address and key from the plugin's settings.
 // Native manifests are parsed as JSON5, so comments are allowed.
 //
-// UNVERIFIED against a running OpenClaw (docs.openclaw.ai, read 10 Nov 2026): that a plugin with no entry point is valid,
-// the exact shape of `mcpServers`, and whether a config value can be placed in its headers. See docs/verification.md.
+// Checked against OpenClaw 2026.11.10: see docs/verification.md.
 {
   "id": "revere",
   "name": "Revere",
   "description": "See your Revere cameras from OpenClaw: live pictures, what was detected, stories and clips. Read-only.",
   "version": "0.1.0",
-  "categories": ["home-automation", "cameras"],
+  "categories": ["security", "media", "integrations"],
 
   "configSchema": {
     "type": "object",
@@ -44,11 +44,13 @@
 
   "skills": ["skills"],
 
+  // Declared here so the server has a name and the skills can use it. OpenClaw does not expand ${config.*} in this
+  // block (only ${PLUGIN_ROOT}, ${PLUGIN_DATA} and ${CLAUDE_PLUGIN_ROOT}), so the connection's real address and
+  // key come from src/index.js, which registers a resolver for this name.
   "mcpServers": {
     "revere": {
       "transport": "streamable-http",
-      "url": "${config.apiUrl}/mcp",
-      "headers": { "Authorization": "Bearer ${config.token}" }
+      "url": "https://api.revere.video/mcp"
     }
   },
 

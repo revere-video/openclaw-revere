@@ -2,7 +2,7 @@
 
 ## What this plugin is
 
-A manifest-only OpenClaw plugin: a configuration schema, Revere's MCP server definition, and skills (text). **No code from this repository runs inside your OpenClaw gateway.** OpenClaw runs plugins in-process as trusted code, so that is on purpose. The one piece of code here, `relay/`, is a separate program you run yourself, outside OpenClaw.
+An OpenClaw plugin: a configuration schema, Revere's MCP server definition, skills (text), and one small file of code, `src/index.js`. **That file runs inside your OpenClaw gateway:** OpenClaw runs plugins in-process as trusted code, so it is kept to what it must do. It has no dependencies, makes no network calls of its own, does nothing at install time, and gives Revere's MCP server its address and your key from the plugin's settings (the key goes only into that connection's Authorization header and is never logged). `scripts/check.mjs` fails if it imports anything, logs, or reads the environment. The other piece of code here, `relay/`, is a separate program you run yourself, outside OpenClaw.
 
 ## What the key can do
 
