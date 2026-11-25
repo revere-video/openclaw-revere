@@ -8,10 +8,18 @@ test('a key alone gives Revere\'s address and the key as a bearer header', () =>
   assert.deepEqual(connection({ token: KEY }), { url: `${DEFAULT_API_URL}/mcp`, headers: { Authorization: `Bearer ${KEY}` } });
 });
 
-test('a given address is used, https only and no path', () => {
+test('a given address is used: plain https, a port and a trailing slash are fine', () => {
   assert.equal(connection({ token: KEY, apiUrl: 'https://revere.example.org' }).url, 'https://revere.example.org/mcp');
-  for (const bad of ['http://revere.example.org', 'https://revere.example.org/x', 'https://revere.example.org/', 'ftp://x', '', 7, 'https://a b'])
-    assert.equal(connection({ token: KEY, apiUrl: bad }), null, String(bad));
+  assert.equal(connection({ token: KEY, apiUrl: 'https://revere.example.org/' }).url, 'https://revere.example.org/mcp');
+  assert.equal(connection({ token: KEY, apiUrl: 'https://revere.example.org:8443' }).url, 'https://revere.example.org:8443/mcp');
+});
+
+test('an address that is more than an address is refused, so the key goes only where it says', () => {
+  for (const bad of ['http://revere.example.org', 'https://revere.example.org/x', 'https://revere.example.org//', 'ftp://x', '', 7, 'https://a b',
+                     'https://revere.example.org?x=1', 'https://revere.example.org/?x=1', 'https://revere.example.org?', 'https://revere.example.org#f',
+                     'https://revere.example.org/#', 'https://user:pass@revere.example.org', 'https://user@revere.example.org',
+                     'https://revere.example.org\\@evil.example', ' https://revere.example.org', 'https://revere.example.org\n', 'https:revere.example.org'])
+    assert.equal(connection({ token: KEY, apiUrl: bad }), null, JSON.stringify(bad));
 });
 
 test('no usable key, no connection', () => {

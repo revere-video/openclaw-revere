@@ -45,6 +45,8 @@ Revere limits API and MCP calls together, per account. Every key on the account 
 - **Read-only key.** No writes, no live video, no admin, no key management. Revoke it in Revere at any time.
 - **Text a model wrote is treated as data,** never as instructions, and pictures are private by default. See [SECURITY.md](SECURITY.md).
 
+Until it is verified, treat the recipes that run on a schedule or from a hook (the package alert, night watch, the evening summary, the morning camera check) as possibly getting **no connection**: OpenClaw gives a plugin's MCP connection only to a turn that has a message sender, and those recipes are started by a schedule or a hook. Asking in chat works. See [what has and has not been checked](docs/verification.md).
+
 ## Without the plugin
 
 If you would rather not run the plugin's code, install the skills and add Revere as an MCP server yourself: a Streamable HTTP server named `revere` at `https://api.revere.video/mcp` with the header `Authorization: Bearer <your read-only key>` (see OpenClaw's `openclaw mcp` documentation).

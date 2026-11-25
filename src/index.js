@@ -9,15 +9,29 @@
 export const DEFAULT_API_URL = 'https://api.revere.video';
 
 /**
+ * The address's origin when it is plain https: a host (and a port), no credentials, no query, no fragment, and no
+ * path but a trailing slash. Anything else is null: the key is only ever sent where the address says, so an address
+ * that is more than an address is refused, not trimmed.
+ */
+function originOf(address) {
+  // The literal shape first (the URL parser is lenient: "https:host" and "https:\\host" are accepted by it), then the parser.
+  if (typeof address !== 'string' || !/^https:\/\/[^\s/?#@\\]+\/?$/.test(address)) return null;
+  let url;
+  try { url = new URL(address); } catch { return null; }
+  if (url.protocol !== 'https:' || url.username || url.password || url.search || url.hash || url.pathname !== '/') return null;
+  return url.origin;
+}
+
+/**
  * The connection for Revere's MCP server from the plugin's settings, or null when they don't make one: no key, a key
  * with whitespace in it, or an address that isn't plain https (a null connection means no connection, never a guess).
  */
 export function connection(settings) {
   const token = settings?.token;
   if (typeof token !== 'string' || token.length < 16 || /\s/.test(token)) return null;
-  const base = settings?.apiUrl ?? DEFAULT_API_URL;
-  if (typeof base !== 'string' || !/^https:\/\/[^\s/]+$/.test(base)) return null;
-  return { url: `${base}/mcp`, headers: { Authorization: `Bearer ${token}` } };
+  const origin = originOf(settings?.apiUrl ?? DEFAULT_API_URL);
+  if (origin === null) return null;
+  return { url: `${origin}/mcp`, headers: { Authorization: `Bearer ${token}` } };
 }
 
 export default {

@@ -28,8 +28,9 @@ export function frontmatter(text) {
   return fm;
 }
 
-// The category slugs OpenClaw 2026.11.10 accepts in a manifest (at most three of them).
-export const OPENCLAW_CATEGORIES = ['channels', 'models', 'agent-runtimes', 'memory', 'context', 'voice', 'web', 'computer-use', 'media', 'security', 'integrations', 'developer-tools', 'infrastructure', 'documents-files', 'inbox-collaboration', 'productivity', 'scheduling', 'finance-payments', 'sales-marketing', 'data-analytics', 'agent-orchestration', 'research', 'other', 'tools', 'runtime', 'gateway'];
+// The category slugs OpenClaw 2026.11.10's documentation lists for a manifest (at most three of them; it also still
+// accepts three older ones, which a new plugin does not use).
+export const OPENCLAW_CATEGORIES = ['channels', 'models', 'agent-runtimes', 'memory', 'context', 'voice', 'web', 'computer-use', 'media', 'security', 'integrations', 'developer-tools', 'infrastructure', 'documents-files', 'inbox-collaboration', 'productivity', 'scheduling', 'finance-payments', 'sales-marketing', 'data-analytics', 'agent-orchestration', 'research', 'other'];
 
 const CREDENTIAL = /\b(rvpat_[0-9A-Za-z]{20,}|bfry_mcp_[0-9a-f]{20,}|sk-[A-Za-z0-9]{20,}|-----BEGIN [A-Z ]*PRIVATE KEY-----)/;
 
@@ -58,7 +59,8 @@ export function check(dir = root) {
   if (!Array.isArray(ext) || ext.length !== 1) problems.push('package.json openclaw.extensions must name the one entry');
   else if (!existsSync(join(dir, ext[0]))) problems.push(`the entry ${ext[0]} is missing`);
   else {
-    const code = read(ext[0]).replace(/\/\/[^\n]*/g, '');
+    // The raw source, comments and all: stripping comments by pattern also eats code after a "https://".
+    const code = read(ext[0]);
     if (/^\s*import\s/m.test(code) || /\brequire\s*\(/.test(code)) problems.push('the entry imports nothing');
     if (/\bconsole\./.test(code) || /\blogger\b/.test(code)) problems.push('the entry does not log');
     if (/\bprocess\.env\b/.test(code) || /\bfetch\s*\(/.test(code) || /node:(http|https|net|child_process|fs)/.test(code)) problems.push('the entry does not read the environment or use the network');

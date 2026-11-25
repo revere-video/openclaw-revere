@@ -24,8 +24,8 @@
       "apiUrl": {
         "type": "string",
         "default": "https://api.revere.video",
-        "pattern": "^https://[^\\s/]+$",
-        "description": "Revere's address. https only, no path."
+        "pattern": "^https://[^\\s/?#@\\\\]+/?$",
+        "description": "Revere's address. https only: a host and a port, no path (a trailing slash is fine), no user name, query or fragment."
       },
       "cameras": {
         "type": "array",

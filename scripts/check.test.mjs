@@ -23,7 +23,7 @@ test('frontmatter reads name, description and version', () => {
 test('it stops what v1 must not be: an entry that does more than it should, a plain-text MCP server, a leaked key, a wrong licence, a loose schema', () => {
   const mutate = (f, fn) => { const d = copy(); const p = join(d, f); writeFileSync(p, fn(readFileSync(p, 'utf8'))); return check(d); };
   assert.ok(mutate('openclaw.plugin.json', t => t.replace('"version": "0.1.0"', '"version": "9.9.9"')).some(p => /versions differ/.test(p)));
-  assert.ok(mutate('openclaw.plugin.json', t => t.replace('https://[^\\\\s/]+$', '.*')).some(p => /https/.test(p)));
+  assert.ok(mutate('openclaw.plugin.json', t => t.replace('https://[^\\\\s/?#@\\\\\\\\]+/?$', '.*')).some(p => /https/.test(p)));
   assert.ok(mutate('openclaw.plugin.json', t => t.replace('"sensitive": true', '"sensitive": false')).some(p => /sensitive/.test(p)));
   assert.ok(mutate('openclaw.plugin.json', t => t.replace('"additionalProperties": false', '"additionalProperties": true')).some(p => /additionalProperties/.test(p)));
   assert.ok(mutate('openclaw.plugin.json', t => t.replace('"skills": ["skills"],', '"skills": ["skills"], "contracts": { "tools": ["x"] },')).some(p => /no tools/.test(p)));
@@ -33,6 +33,9 @@ test('it stops what v1 must not be: an entry that does more than it should, a pl
   assert.ok(mutate('src/index.js', t => t + '\nconsole.log(settings.token);').some(p => /does not log/.test(p)));
   assert.ok(mutate('src/index.js', t => "import fs from 'node:fs';\n" + t).some(p => /imports nothing/.test(p)));
   assert.ok(mutate('src/index.js', t => t + '\nfetch("https://x");').some(p => /network/.test(p)));
+  // Code after a "https://" on the same line is still looked at.
+  assert.ok(mutate('src/index.js', t => t + '\nconst u = "https://x"; console.log(u); fetch(u);').some(p => /does not log/.test(p) && true));
+  assert.ok(mutate('src/index.js', t => t + '\nconst u = "https://x"; console.log(u); fetch(u);').some(p => /network/.test(p)));
   assert.ok(mutate('openclaw.plugin.json', t => t.replace('"transport": "streamable-http"', '"transport": "streamable-http", "alt": "http://x"')).some(p => /https/.test(p)));
   assert.ok(mutate('skills/LICENSE', t => t.replace('MIT No Attribution', 'MIT License')).some(p => /MIT-0/.test(p)));
   assert.ok(mutate('skills/revere/SKILL.md', t => t + '\nrvpat_' + 'a'.repeat(43)).some(p => /credential/.test(p)));
